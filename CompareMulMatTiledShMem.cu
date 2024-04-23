@@ -187,7 +187,16 @@ int main(int argc, char **argv)
     cudaEventSynchronize(time2);
     cudaEventElapsedTime(&kernelExecutionTime, time1, time2);
     printf("simpleMatMulKernel\t\t elapsed time: %20.18f ms\n", kernelExecutionTime);
-        
+    
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            if (h_C[i * N + j] != cpu_C[i * N + j])
+            {
+                printf("h_C[%d][%d]==%d != cpu_C[%d][%d]==%d\n", i, j, i, j, h_C[i * N + j], cpu_C[i * N + j]);
+                return -1;
+            }
+
+
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);

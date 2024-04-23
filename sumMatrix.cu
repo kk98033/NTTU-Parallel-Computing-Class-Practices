@@ -38,6 +38,29 @@ __global__ void sumMatrixOnGPU_1D1D_v2(float *MatA, float *MatB, float *MatC, in
     }
 }
 
+/* Practice: 新增2D grids of 1D block的v1與v2函式及相關的對應程式碼 */
+__global__ void sumMatrixOnGPU_2DGrid1DBlock_v1(float *MatA, float *MatB, float *MatC, int nx, int ny) {
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    if (ix < nx) {
+        for (int iy = 0; iy < ny; iy++) {
+            int idx = iy * nx + ix;
+            MatC[idx] = MatA[idx] + MatB[idx];
+        }
+    }
+}
+
+// 這個版本將使用類似的配置，但會對每個線程使用一個更嚴格的界限檢查，確保不會有任何越界錯誤。
+__global__ void sumMatrixOnGPU_2DGrid1DBlock_v2(float *MatA, float *MatB, float *MatC, int nx, int ny) {
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    if (ix >= nx) return;  // Ensure ix is within bounds before proceeding.
+
+    for (int iy = 0; iy < ny; iy++) {
+        int idx = iy * nx + ix;
+        MatC[idx] = MatA[idx] + MatB[idx];
+    }
+}
+/**/
+
 __global__ void sumMatrixOnGPU_2D2D_v1(float *MatA, float *MatB, float *MatC, int nx, int ny)
 {
     unsigned int bIdx = blockIdx.x + blockIdx.y * gridDim.x;
@@ -100,10 +123,12 @@ int main(int argc, char **argv)
     cudaEvent_t time1, time2;
     float kernelExecutionTime;
     printf("%s Starting...\n", argv[0]);
+    
     // set up device
     cudaGetDeviceProperties(&deviceProp, dev);
     printf("Using Device %d: %s\n", dev, deviceProp.name);
     cudaSetDevice(dev);
+
     // 使用者資料維度為nx * ny
     int nx = 1 << 10;
     int ny = 1 << 10;
@@ -115,6 +140,7 @@ int main(int argc, char **argv)
     h_B = (float *)malloc(nBytes);
     hostRef = (float *)malloc(nBytes);
     gpuRef = (float *)malloc(nBytes);
+
     // 初始化使用者資料
     printf("nxy=%d\n", nxy);
     initialData(h_A, nxy);
@@ -122,6 +148,7 @@ int main(int argc, char **argv)
     memset(hostRef, 0, nBytes);
     memset(gpuRef, 0, nBytes);
     iStart = cpuSecond();
+
     // 執行CPU矩陣相加函式
     sumMatrixOnHost(h_A, h_B, hostRef, nx, ny);
     iElaps = cpuSecond() - iStart;
@@ -131,6 +158,7 @@ int main(int argc, char **argv)
     cudaMalloc((void **)&d_MatA, nBytes);
     cudaMalloc((void **)&d_MatB, nBytes);
     cudaMalloc((void **)&d_MatC, nBytes);
+
     // transfer data from host to device
     cudaMemcpy(d_MatA, h_A, nBytes,
                cudaMemcpyHostToDevice);
@@ -155,6 +183,52 @@ int main(int argc, char **argv)
     dim3 grid22v2((nx + block22v2.x - 1) / block22v2.x, (ny + block22v2.y - 1) / block22v2.y);
     cudaEventCreate(&time1);
     cudaEventCreate(&time2);
+
+    // 2D 1D v1
+    int threadsPerBlock = 1024;
+    dim3 block2D1Dv1(threadsPerBlock);
+    dim3 grid2D1Dv1((nx + block2D1Dv1.x - 1) / block2D1Dv1.x, ny);
+
+    // 2D Grids of 1D Blocks v1
+    cudaEventRecord(time1, 0);
+    sumMatrixOnGPU_2DGrid1DBlock_v1<<<grid2D1Dv1, block2D1Dv1>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    cudaEventRecord(time2, 0);
+
+    cudaEventSynchronize(time1);
+    cudaEventSynchronize(time2);
+    cudaEventElapsedTime(&kernelExecutionTime, time1, time2);
+
+    printf("sumMatrixOnGPU_2D1D_v1 <<<(%d,%d), (%d,%d)>>> elapsed %7.3f ms\n",
+           block2D1Dv1.x, block2D1Dv1.y, grid2D1Dv1.x, grid2D1Dv1.y, kernelExecutionTime);
+
+    cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost);
+
+    // check device results
+    checkResult(hostRef, gpuRef, nxy);
+
+
+    // 2D 1D v2
+    threadsPerBlock = 1024;
+    dim3 block2D1Dv2(threadsPerBlock);
+    dim3 grid2D1Dv2((nx + block2D1Dv2.x - 1) / block2D1Dv2.x, ny);
+
+    // 2D Grids of 1D Blocks v2
+    cudaEventRecord(time1, 0);
+    sumMatrixOnGPU_2DGrid1DBlock_v2<<<grid2D1Dv2, block2D1Dv2>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    cudaEventRecord(time2, 0);
+
+    cudaEventSynchronize(time1);
+    cudaEventSynchronize(time2);
+    cudaEventElapsedTime(&kernelExecutionTime, time1, time2);
+
+    printf("sumMatrixOnGPU_2D1D_v2 <<<(%d,%d), (%d,%d)>>> elapsed %7.3f ms\n",
+           block2D1Dv2.x, block2D1Dv2.y, grid2D1Dv2.x, grid2D1Dv2.y, kernelExecutionTime);
+
+    cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost);
+
+    // check device results
+    checkResult(hostRef, gpuRef, nxy);
+
     // 1D-1D v1
     cudaEventRecord(time1, 0);
     sumMatrixOnGPU_1D1D_v1<<<grid11v1, block11v1>>>(d_MatA, d_MatB, d_MatC, nx, ny);
@@ -165,6 +239,7 @@ int main(int argc, char **argv)
     printf("sumMatrixOnGPU_1D1D_v1 <<<(%d,%d), (%d,%d)>>> elapsed %7.3f ms\n", grid11v1.x,
            grid11v1.y, block11v1.x, block11v1.y, kernelExecutionTime);
     cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost);
+
     // check device results
     checkResult(hostRef, gpuRef, nxy);
 
@@ -179,6 +254,7 @@ int main(int argc, char **argv)
            grid11v2.x, grid11v2.y, block11v2.x, block11v2.y, kernelExecutionTime);
     cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost);
     checkResult(hostRef, gpuRef, nxy);
+
     // 2D-2D v1
     cudaEventRecord(time1, 0);
     sumMatrixOnGPU_2D2D_v1<<<grid22v1, block22v1>>>(d_MatA, d_MatB, d_MatC, nx, ny);

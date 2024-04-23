@@ -1,3 +1,9 @@
+/*
+./pinned_mTransfer 
+./pinned_mTransfer starting at device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU memory size 4194304 nbyte 16.00MB
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 int main(int argc, char **argv)

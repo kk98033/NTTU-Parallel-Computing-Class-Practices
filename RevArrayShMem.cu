@@ -1,3 +1,11 @@
+/*
+./RevArrayShMem
+n=1024
+Kernel Elapsed time: 0.736256003379821777 ms
+a[1023]=1023, a[1022]=1022, a[1021]=1021, 
+d[1023]=  0, d[1022]=  1, d[1021]=  2, 
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 __global__ void RevArrShMem(int *out, int *in)

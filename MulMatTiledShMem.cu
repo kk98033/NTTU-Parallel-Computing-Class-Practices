@@ -1,3 +1,15 @@
+/*
+./MulMatTiledShMem 
+N = 64, TILE_WIDTH = 16
+dimGrid.x = 4, dimGrid.y = 4
+MulMatCPU			 elapsed time: 0.697120010852813721ms
+MulMatTiledShMem		 elapsed time: 1.328127980232238770 ms
+MulMatTiledShMemNoBankConflicts	 elapsed time: 0.014688000082969666 ms
+Results Matched!
+h_C[0][0] = 87360
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 #define TILE_WIDTH 16

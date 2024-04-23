@@ -1,3 +1,14 @@
+/*
+./reduceSum 
+./reduceSum starting reduction at device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU with array size 16777216 grid 32768 block 512
+cpu reduce elapsed  35.794 msec cpu_sum: 2139353471
+gpu Neighbored elapsed   3.361 msec gpu_sum: 2139353471 <<<grid 32768 block 512>>>
+gpu Neighbored2 elapsed   1.009 msec gpu_sum: 2139353471 <<<grid 32768 block 512>>>
+gpu Interleaved elapsed   0.884 msec gpu_sum: 2139353471 <<<grid 32768 block 512>>>
+gpu Unrolling4 elapsed   0.483 msec gpu_sum: 2139353471 <<<grid 8192 block 512>>>
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 #include <sys/time.h>

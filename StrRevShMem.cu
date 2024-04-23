@@ -1,3 +1,11 @@
+/*
+./StrRevShMem 
+RevShmem elapsed time: 1.536000013351440430 ms
+a[0]=  0, a[1]=  1, a[2]=  2, 
+d[0]= 63, d[1]= 62, d[2]= 61, 
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 

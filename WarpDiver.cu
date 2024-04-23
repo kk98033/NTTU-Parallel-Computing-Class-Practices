@@ -1,3 +1,13 @@
+/*
+./WarpDiver 
+./WarpDiver using Device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Data size 64 Execution Configure (block 64 grid 1)
+mathKernel1 <<<    1   64 >>> elapsed 1.24090 msec
+mathKernel2 <<<    1   64 >>> elapsed 0.01024 msec 
+mathKernel3 <<<    1   64 >>> elapsed 0.00934 msec 
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 #include <sys/time.h>

@@ -1,3 +1,13 @@
+/*
+./vectoradd_pinned_memory_w_shared_memory 
+dimblock.x = 1024, dimblock.y = 1, dimblock.z = 1
+dimgrid.x = 1, dimgrid.y = 1, dimgrid.z = 1
+Using Device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+h_C[1023] ==   50.00
+Kernel Execution =    0.76 ms
+
+*/
+
 #include <stdio.h>
 #include <cuda_runtime.h>
 // Kernel definition

@@ -1,3 +1,25 @@
+/*
+./sumMatrix 
+./sumMatrix Starting...
+Using Device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Matrix size: nx 1024 ny 1024
+nxy=1048576
+sumMatrixOnHost elapsed    2.40 ms
+sumMatrixOnGPU_2D1D_v1 <<<(1024,1), (1,1024)>>> elapsed  19.322 ms
+Results match.
+sumMatrixOnGPU_2D1D_v2 <<<(1024,1), (1,1024)>>> elapsed  20.162 ms
+Results match.
+sumMatrixOnGPU_1D1D_v1 <<<(1024,1), (1024,1)>>> elapsed   0.077 ms
+Results match.
+sumMatrixOnGPU_1D1D_v2 <<<(1,1), (1024,1)>>> elapsed   0.372 ms
+Results match.
+sumMatrixOnGPU_2D2D_v1 <<<(32,32), (32,32)>>> elapsed   0.076 ms
+Results match.
+sumMatrixOnGPU_2D2D_v2 <<<(32,32), (32,32)>>> elapsed   0.093 ms
+Results match.
+
+*/
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <cuda_runtime.h>

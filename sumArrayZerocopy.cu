@@ -1,3 +1,12 @@
+/*
+./sumArrayZerocopy 
+Using Device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU Vector size 1024 power 10 nbytes   4 KB
+cpu computation:              0.00384 ms
+Normal(Pageabled memory) H->D:  0.0152 ms, kernel computation:  0.7526 ms, D->H:  0.0111 ms, TOTAL:  0.7789 ms
+Zerocopy(Pinned memory) kernel computation:  0.0199 ms
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 void checkResult(float *hostRef, float *gpuRef, const int N)

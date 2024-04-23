@@ -1,3 +1,19 @@
+/*
+./mulMatrix 
+./mulMatrix Starting...
+Using Device 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Matrix size: nx 256 ny 256
+nxy=65536
+sumMatrixOnHost elapsed   35.49 ms
+sumMatrixOnGPU_2D1D_v1 <<<(1024,1), (1,256)>>> elapsed  20.046 ms
+Results match.
+sumMatrixOnGPU_1D1D_v1 <<<(64,1), (1024,1)>>> elapsed   2.542 ms
+Results match.
+sumMatrixOnGPU_2D2D_v1 <<<(8,8), (32,32)>>> elapsed   0.089 ms
+Results match.
+
+*/
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <cuda_runtime.h>

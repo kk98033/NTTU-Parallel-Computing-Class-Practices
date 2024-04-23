@@ -1,3 +1,13 @@
+/*
+./AddMatTiledShMem 
+N = 64, TILE_WIDTH = 16
+dimGrid.x = 4, dimGrid.y = 4
+AddMatCPU			 elapsed time: 0.012288000434637070ms
+AddMatTiledShMem		 elapsed time: 0.016511999070644379 ms
+h_C[0][0]==0 != cpu_C[0][4096]==1
+
+*/
+
 #include <cuda_runtime.h>
 #include <stdio.h>
 #define TILE_WIDTH 16
